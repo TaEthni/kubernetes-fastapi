@@ -45,6 +45,6 @@ jobs:
           manifests/deployment.yml
           manifests/service.yml
         images: |
-          taethniacr.azurecr.io/kubernetes:${{ github.sha }}
+          taethniacr.azurecr.io/fast-api-sample:${{ github.sha }}
         imagepullsecrets: |
           kubernetesdockerauth
