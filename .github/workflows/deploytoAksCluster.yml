@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: taethniacr.azurecr.io
+        username: ${{ secrets.acr_taethniacr_username }}
+        password: ${{ secrets.acr_taethniacr_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t taethniacr.azurecr.io/kubernetes:${{ github.sha }} --label dockerfile-path=Dockerfile
+        docker push taethniacr.azurecr.io/kubernetes:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_kubernetes_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep fast-api-sample | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace fast-api-sample`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: fast-api-sample
+        container-registry-url: taethniacr.azurecr.io
+        container-registry-username: ${{ secrets.acr_taethniacr_username }}
+        container-registry-password: ${{ secrets.acr_taethniacr_password }}
+        secret-name: kubernetesdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: fast-api-sample
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          taethniacr.azurecr.io/kubernetes:${{ github.sha }}
+        imagepullsecrets: |
+          kubernetesdockerauth
