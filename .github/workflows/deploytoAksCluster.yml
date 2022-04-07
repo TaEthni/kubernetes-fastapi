@@ -45,7 +45,6 @@ jobs:
         
     - name: Modify manifests
       run: |
-        sed -i "s/UrlBase = FQDN/UrlBase = https:\/\/$FQDN/g" manifests/config.yml
         sed -i "s/FQDN/$FQDN/g" manifests/ingress.yml
        
     - uses: azure/k8s-deploy@v1.2
