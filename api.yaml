@@ -3,15 +3,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kf-api-svc
+  name: fast-api-svc
 spec:
   selector:
-    app: kf-api
+    app: fast-api-sample
   ports:
     - protocol: "TCP"
       port: 8080
       targetPort: 8080
-  type: LoadBalancer
+  type: ClusterIP
 
 ---
 # kf-api Deployment
@@ -19,22 +19,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kf-api
+  name: fast-api-sample
   labels:
-    app: kf-api
+    app: fast-api-sample
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kf-api
+      app: fast-api-sample
   template:
     metadata:
       labels:
-        app: kf-api
+        app: fast-api-sample
     spec:
       containers:
-        - name: kf-api
-          image: 4oh4/kubernetes-fastapi:1.0.0
+        - name: fast-api-sample
+          image: "taethniacr.azurecr.io/fast-api-sample"
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
