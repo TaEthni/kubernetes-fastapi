@@ -11,7 +11,7 @@ spec:
     - hosts:
         - FQDN
       secretName: tls-secret
-      --validate=false
+      --validate=false:
   rules:
     - host: FQDN
       http:
