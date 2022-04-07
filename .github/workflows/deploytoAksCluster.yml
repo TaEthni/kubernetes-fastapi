@@ -1,4 +1,9 @@
 on: [push]
+env:
+  FQDN: fast-api-sample.taethni.com
+  NAMESPACE: fast-api-sample
+  CONTAINERNAME: fast-api-sample
+  CONTAINERVERSION: latest
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
