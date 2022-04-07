@@ -37,6 +37,11 @@ jobs:
         container-registry-username: ${{ secrets.acr_taethniacr_username }}
         container-registry-password: ${{ secrets.acr_taethniacr_password }}
         secret-name: kubernetesdockerauth
+        
+    - name: Modify manifests
+      run: |
+        sed -i "s/UrlBase = FQDN/UrlBase = https:\/\/$FQDN/g" manifests/config.yml
+        sed -i "s/FQDN/$FQDN/g" manifests/ingress.yml
        
     - uses: azure/k8s-deploy@v1.2
       with:
@@ -44,6 +49,7 @@ jobs:
         manifests: |
           manifests/deployment.yml
           manifests/service.yml
+          manifests/ingress.yml
         images: |
           taethniacr.azurecr.io/fast-api-sample:${{ github.sha }}
         imagepullsecrets: |
