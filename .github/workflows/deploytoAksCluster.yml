@@ -48,7 +48,7 @@ jobs:
         namespace: fast-api-sample
         manifests: |
           manifests/deployment.yml
-          autoscale.yml
+          manifests/autoscale.yml
           manifests/service.yml
           manifests/ingress.yml
         images: |
